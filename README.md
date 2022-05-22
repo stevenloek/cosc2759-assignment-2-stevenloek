@@ -34,4 +34,4 @@ additional measures have to be taken to enable fault tolerance.  the servers may
 other options would be: 
 *  EC2 instance can be part of a Highly Available configuration which consists of two instances, each one running in a different AZ in the same region with its own copy of the data. The redundant data copies are synchronously mirrored, providing access to the data in different AZs.
 *  use a managaed service like DocumentDb or MongoDB Atlas
-*  use Amazon RDS DB instance
+*  use Amazon RDS DB instance.
