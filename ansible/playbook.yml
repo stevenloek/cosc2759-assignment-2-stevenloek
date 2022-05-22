@@ -1,8 +1,70 @@
-- name: Deploy Application
-  hosts: all
+- name: playbook
+hosts: all
+  vars:
+    file_location: " /ansible/www/html/index.html"
 
-  tasks: 
-    - name: Create a file called '/tmp/testfile.txt' with the content 'hello world'.
-      copy:
-        content: hello world
-        dest: /tmp/testfile.txt
+  task:
+    name: Obtain Repo Setup Script for node
+    get_url:
+      url: https://rpm.nodesource.com/setup_15.x
+      dest: ansible/scripts/run-ansible.sh
+      mode: 0777
+
+      - name: Execute the script
+          become: yes
+          command: sh ansible/scripts/run-ansible.sh
+
+      - name: Updgrade all packages
+            become: yes
+            yum:
+              name: "*"
+              state: latest
+
+      - name: Install NodeJs
+            become: yes
+            yum:
+              name: "nodejs"
+              state: latest
+
+    - name: Install Apache
+    become: true
+    package:
+      name: httpd
+      state: present
+
+    - name: Ensure Apache is running
+      become: true
+      ansible.builtin.systemd:
+          name: httpd
+          state: started
+          enabled: yes
+
+
+    - name: add test page for web
+          become: true
+          shell:
+            cmd: "echo \"hello web\" > /var/www/html/index.html"
+
+    - name: ensure index.html is deployed as per template
+            become: true
+            vars:
+              name: "steven"
+              title: "RMIT assignment 2"
+            template:
+              src: service.tpl
+              dest: "{{ file_location }}"
+
+    - name: install and configure DB
+        become: yes
+
+        vars:
+          mongoDB_Port: 27017
+
+        tasks:
+        -name: Install the mongodb
+      apt: pkg=mongodb-org state=latest update_cache=yes
+        notify:
+          - start mongodb
+      handlers:
+    - name: start mongodb
+        service: name=mongod state=started

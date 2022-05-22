@@ -41,12 +41,15 @@ infra-init:
 	cd infra && terraform init
 
 #
+ansible-up:
+	cd ansible/scripts %% ./run-ansible.sh
 
 pack:
 	cd src && npm pack
-	if [ -d "ansible/files/" ];	\
-	then mv src/simpletodoapp-1.0.1.tgz ansible/files/simpletodoapp-1.0.1.tgz;\
-	else \
-	mkdir ansible/files/ && \
-	mv src/simpletodoapp-1.0.1.tgz ansible/files/simpletodoapp-1.0.1.tgz; \
-	fi
+	mkdir -p "ansible/files"
+	mv src/notes-1.0.0.tgz ansible/files
+
+infra-down:
+	cd infra && terraform destroy --auto-approve
+infra-up:
+	cd infra && terraform apply --auto-approve

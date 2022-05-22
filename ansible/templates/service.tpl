@@ -4,8 +4,7 @@ Requires=network-online.target
 After=network-online.target
 
 [Service]
-Environment=DB_URL=mongodb://{{ db_user }}:{{ db_pass }}@{{ db_url }}:27017/
-Environment=SESSION_SECRET=secret
+Environment=MONGO_URL=mongodb://{{ db_url }}:27017/
 WorkingDirectory={{ app_path }}
 Type=simple
 ExecStart=/usr/bin/node {{ app_path }}server.js
